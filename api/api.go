@@ -18,8 +18,9 @@ func New(c *config.ShortsConfig) (*Server, error) {
 		config: c,
 	}, nil
 }
-
+func (s *Server) showURL(c *gin.Context) {}
 func (s *Server) initRoutes() {
+	s.r.GET("/:url", s.showURL)
 	// The only kratos thing would be here
 	userAPI := s.r.Group("/api/")
 	_ = userAPI

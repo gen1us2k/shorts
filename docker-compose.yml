@@ -20,8 +20,6 @@ services:
 
   postgres-kratos:
     image: postgres:9.6
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_USER=kratos
       - POSTGRES_PASSWORD=secret
@@ -82,8 +80,6 @@ services:
 
   postgres-keto:
     image: postgres:9.6
-    ports:
-      - "15432:5432"
     environment:
       - POSTGRES_USER=keto
       - POSTGRES_PASSWORD=secret
@@ -139,6 +135,24 @@ services:
     networks:
       - intranet
     command: serve
+
+  postgres-shorts:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=shorts
+      - POSTGRES_PASSWORD=notsecureatall
+      - POSTGRES_DB=shorts
+    networks:
+      - intranet
+
+  shorts:
+    build:
+      context: .
+
+    networks:
+      - intranet
 
 
 volumes:

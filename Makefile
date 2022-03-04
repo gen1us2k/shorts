@@ -5,3 +5,6 @@ help:
 
 test:
 	go test ./...
+
+create_migration:
+	migrate create -ext sql -dir migrations -seq create_url_table

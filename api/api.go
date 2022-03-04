@@ -1,6 +1,8 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gen1us2k/shorts/config"
 	"github.com/gen1us2k/shorts/database"
 	"github.com/gin-gonic/gin"
@@ -11,6 +13,9 @@ type (
 		r      *gin.Engine
 		config *config.ShortsConfig
 		db     database.WriteDatabase
+	}
+	DefaultResponse struct {
+		Message string `json:"message"`
 	}
 )
 
@@ -25,9 +30,27 @@ func New(c *config.ShortsConfig) (*Server, error) {
 		db:     db,
 	}, nil
 }
-func (s *Server) showURL(c *gin.Context) {}
+func (s *Server) showURL(c *gin.Context) {
+	hash := c.Param("hash")
+	u, err := s.db.GetURLByHash(hash)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+			Message: "error querying database",
+		})
+		return
+	}
+
+	if err := s.db.SaveStatistics(); err != nil {
+		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+			Message: "error querying database",
+		})
+		return
+	}
+	c.Redirect(http.StatusMovedPermanently, u.URL)
+}
+
 func (s *Server) initRoutes() {
-	s.r.GET("/:url", s.showURL)
+	s.r.GET("/:hash", s.showURL)
 	// The only kratos thing would be here
 	userAPI := s.r.Group("/api/")
 	userAPI.POST("/url", s.shortifyURL)

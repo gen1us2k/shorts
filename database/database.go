@@ -9,7 +9,9 @@ import (
 type (
 	WriteDatabase interface {
 		ShortifyURL(model.URL) (model.URL, error)
+		GetURLByHash(string) (URL, error)
 		StoreView() error
+		SaveStatistics() error
 	}
 	Analytics interface {
 		Statistics(model.URL) (model.Statistics, error)

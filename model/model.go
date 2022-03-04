@@ -3,15 +3,19 @@ package model
 import "time"
 
 type (
+	// URL struct is required for working with databases
 	URL struct {
-		OriginalURL    string
-		CreationDate   time.Time
-		ExpirationDate time.Time
-		UserID         int64
-		User           User
+		ID        int64     `db:"id"`
+		URL       string    `db:"url"`
+		Hash      string    `db:"hash"`
+		CreatedAt time.Time `db:"created_at"`
+		ExpiredAt time.Time `db:"expired_at"`
+		OwnerID   string    `db:"owner_id"`
 	}
 	Referer struct {
-		URL string
+		ID      int64  `db:"id"`
+		URLID   int64  `db:"url_id"`
+		Referer string `db:"referer"`
 	}
 	User struct {
 		FirstName    string

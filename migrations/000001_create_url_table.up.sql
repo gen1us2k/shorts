@@ -8,3 +8,11 @@ CREATE TABLE IF NOT EXISTS url (
 );
 
 CREATE UNIQUE INDEX idx_url_hash ON url(hash);
+
+CREATE TABLE IF NOT EXISTS url_view (
+	id SERIAL PRIMARY KEY,
+	referer VARCHAR(255) NOT NULL DEFAULT '',
+	url_id INT NOT NULL,
+	CONSTRAINT fk_url_view FOREIGN KEY(url_id) REFERENCES url(id)
+);
+

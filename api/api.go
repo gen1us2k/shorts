@@ -5,6 +5,7 @@ import (
 
 	"github.com/gen1us2k/shorts/config"
 	"github.com/gen1us2k/shorts/database"
+	"github.com/gen1us2k/shorts/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,6 +31,18 @@ func New(c *config.ShortsConfig) (*Server, error) {
 		db:     db,
 	}, nil
 }
+func (s *Server) initRoutes() {
+	s.r.GET("/:hash", s.showURL)
+	// The only kratos thing would be here
+	userAPI := s.r.Group("/api/")
+	userAPI.POST("/url", s.shortifyURL)
+
+	// TODO: Implement RBAC here
+	analyticsAPI := s.r.Group("/analytics")
+	_ = analyticsAPI
+
+}
+
 func (s *Server) showURL(c *gin.Context) {
 	hash := c.Param("hash")
 	u, err := s.db.GetURLByHash(hash)
@@ -49,19 +62,24 @@ func (s *Server) showURL(c *gin.Context) {
 	c.Redirect(http.StatusMovedPermanently, u.URL)
 }
 
-func (s *Server) initRoutes() {
-	s.r.GET("/:hash", s.showURL)
-	// The only kratos thing would be here
-	userAPI := s.r.Group("/api/")
-	userAPI.POST("/url", s.shortifyURL)
-	_ = userAPI
-
-	// TODO: Implement RBAC here
-	analyticsAPI := s.r.Group("/analytics")
-	_ = analyticsAPI
-
+func (s *Server) shortifyURL(c *gin.Context) {
+	var url model.URL
+	if err := c.ShouldBindJSON(&url); err != nil {
+		c.JSON(http.StatusBadRequest, &DefaultResponse{
+			Message: "failed parse json",
+		})
+		return
+	}
+	u, err := s.db.ShortifyURL(url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+			Message: "failed to create short version",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, u)
 }
-func (s *Server) shortifyURL(c *gin.Context) {}
+
 func (s *Server) Start() error {
 	return s.r.Run(s.config.BindAddr)
 }

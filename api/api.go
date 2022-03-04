@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gen1us2k/shorts/config"
+	"github.com/gen1us2k/shorts/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,13 +10,19 @@ type (
 	Server struct {
 		r      *gin.Engine
 		config *config.ShortsConfig
+		db     database.WriteDatabase
 	}
 )
 
 func New(c *config.ShortsConfig) (*Server, error) {
+	db, err := database.NewPostgres(c)
+	if err != nil {
+		return nil, err
+	}
 	return &Server{
 		r:      gin.Default(),
 		config: c,
+		db:     db,
 	}, nil
 }
 func (s *Server) showURL(c *gin.Context) {}

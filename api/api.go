@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gen1us2k/shorts/config"
@@ -25,11 +26,13 @@ func New(c *config.ShortsConfig) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Server{
+	s := &Server{
 		r:      gin.Default(),
 		config: c,
 		db:     db,
-	}, nil
+	}
+	s.initRoutes()
+	return s, nil
 }
 func (s *Server) initRoutes() {
 	s.r.GET("/:hash", s.showURL)
@@ -45,6 +48,7 @@ func (s *Server) initRoutes() {
 }
 
 func (s *Server) showURL(c *gin.Context) {
+	log.Println("showURL")
 	hash := c.Param("hash")
 	u, err := s.db.GetURLByHash(hash)
 	if err != nil {
@@ -66,6 +70,7 @@ func (s *Server) showURL(c *gin.Context) {
 	c.Redirect(http.StatusMovedPermanently, u.URL)
 }
 func (s *Server) listURLs(c *gin.Context) {
+	log.Println("listURLS")
 	// FIXME: Improve handling
 	urls, err := s.db.ListURLs("something")
 	if err != nil {
@@ -78,6 +83,7 @@ func (s *Server) listURLs(c *gin.Context) {
 }
 
 func (s *Server) shortifyURL(c *gin.Context) {
+	log.Println("Shortify")
 	var url model.URL
 	if err := c.ShouldBindJSON(&url); err != nil {
 		c.JSON(http.StatusBadRequest, &DefaultResponse{

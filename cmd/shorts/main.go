@@ -1,7 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"log"
+
+	"github.com/gen1us2k/shorts/api"
+	"github.com/gen1us2k/shorts/config"
+)
 
 func main() {
-	fmt.Println("vim-go")
+	c, err := config.Parse()
+	if err != nil {
+		log.Fatal(err)
+	}
+	api, err := api.New(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+	api.Start()
 }

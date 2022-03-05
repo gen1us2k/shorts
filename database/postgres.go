@@ -56,3 +56,9 @@ func (p *Postgres) StoreView(ref model.Referer) error {
 
 	return tx.Commit()
 }
+
+func (p *Postgres) GetURLByHash(hash string) (model.URL, error) {
+	var url model.URL
+	err := p.conn.Get(&url, "SELECT * FROM url WHERE hash=$1", hash)
+	return url, err
+}

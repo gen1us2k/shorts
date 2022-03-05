@@ -36,6 +36,7 @@ func (s *Server) initRoutes() {
 	// The only kratos thing would be here
 	userAPI := s.r.Group("/api/")
 	userAPI.POST("/url", s.shortifyURL)
+	userAPI.GET("/url", s.listURLs)
 
 	// TODO: Implement RBAC here
 	analyticsAPI := s.r.Group("/analytics")
@@ -52,14 +53,28 @@ func (s *Server) showURL(c *gin.Context) {
 		})
 		return
 	}
-
-	if err := s.db.SaveStatistics(); err != nil {
+	ref := model.Referer{
+		URLID:   u.ID,
+		Referer: c.Request.Header["Referer"][0],
+	}
+	if err := s.db.StoreView(ref); err != nil {
 		c.JSON(http.StatusInternalServerError, &DefaultResponse{
 			Message: "error querying database",
 		})
 		return
 	}
 	c.Redirect(http.StatusMovedPermanently, u.URL)
+}
+func (s *Server) listURLs(c *gin.Context) {
+	// FIXME: Improve handling
+	urls, err := s.db.ListURLs("something")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+			Message: "error querying database",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, urls)
 }
 
 func (s *Server) shortifyURL(c *gin.Context) {

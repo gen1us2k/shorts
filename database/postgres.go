@@ -23,7 +23,7 @@ func NewPostgres(c *config.ShortsConfig) (*Postgres, error) {
 }
 func (p *Postgres) ShortifyURL(u model.URL) (model.URL, error) {
 	var url model.URL
-	tx, err := p.conn.Begin()
+	tx, err := p.conn.Beginx()
 	if err != nil {
 		return url, err
 	}
@@ -48,7 +48,7 @@ func (p *Postgres) StoreView(ref model.Referer) error {
 	if err != nil {
 		return err
 	}
-	err = tx.Exec("INSERT INTO url_view (referer, url_id) VALUES ($1, $2)", ref.Referer, ref.URLID)
+	_, err = tx.Exec("INSERT INTO url_view (referer, url_id) VALUES ($1, $2)", ref.Referer, ref.URLID)
 	if err != nil {
 		tx.Rollback()
 		return err

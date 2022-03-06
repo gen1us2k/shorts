@@ -1,6 +1,8 @@
 package database
 
 import (
+	"time"
+
 	_ "github.com/lib/pq"
 
 	"github.com/gen1us2k/shorts/config"
@@ -28,7 +30,8 @@ func (p *Postgres) ShortifyURL(u model.URL) (model.URL, error) {
 		return url, err
 	}
 	u.Hash = generateHash(p.config.URLLength)
-	err = tx.Get(&url, "INSERT INTO url (url, hash, expired_at, owner_id) VALUES($1, $2, $3, $4) RETURNING (id, url, hash, created_at, expired_at, owner_id)")
+	u.ExpiredAt = time.Now().AddDate(0, 1, -1)
+	err = tx.Get(&url, "INSERT INTO url (url, hash, expired_at, owner_id) VALUES($1, $2, $3, $4) RETURNING id, url, hash, created_at, expired_at, owner_id", u.URL, u.Hash, u.ExpiredAt, u.OwnerID)
 	if err != nil {
 		tx.Rollback()
 		return url, err

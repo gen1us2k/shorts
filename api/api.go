@@ -54,9 +54,14 @@ func (s *Server) showURL(c *gin.Context) {
 		})
 		return
 	}
+	referers := c.Request.Header["Referer"]
+	referer := ""
+	if len(referers) > 0 {
+		referer = referers[0]
+	}
 	ref := model.Referer{
 		URLID:   u.ID,
-		Referer: c.Request.Header["Referer"][0],
+		Referer: referer,
 	}
 	if err := s.db.StoreView(ref); err != nil {
 		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
@@ -90,6 +95,7 @@ func (s *Server) shortifyURL(c *gin.Context) {
 	}
 	u, err := s.db.ShortifyURL(url)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
 			Message: "failed to create short version",
 		})

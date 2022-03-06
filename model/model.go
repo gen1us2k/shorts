@@ -24,5 +24,8 @@ type (
 		LastLogin    string
 		Email        string
 	}
+	DefaultResponse struct {
+		Message string `json:"message"`
+	}
 	Statistics struct{}
 )

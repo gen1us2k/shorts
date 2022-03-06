@@ -16,9 +16,6 @@ type (
 		config *config.ShortsConfig
 		db     database.WriteDatabase
 	}
-	DefaultResponse struct {
-		Message string `json:"message"`
-	}
 )
 
 func New(c *config.ShortsConfig) (*Server, error) {
@@ -52,7 +49,7 @@ func (s *Server) showURL(c *gin.Context) {
 	hash := c.Param("hash")
 	u, err := s.db.GetURLByHash(hash)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
 			Message: "error querying database",
 		})
 		return
@@ -62,7 +59,7 @@ func (s *Server) showURL(c *gin.Context) {
 		Referer: c.Request.Header["Referer"][0],
 	}
 	if err := s.db.StoreView(ref); err != nil {
-		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
 			Message: "error querying database",
 		})
 		return
@@ -74,7 +71,7 @@ func (s *Server) listURLs(c *gin.Context) {
 	// FIXME: Improve handling
 	urls, err := s.db.ListURLs("something")
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
 			Message: "error querying database",
 		})
 		return
@@ -86,14 +83,14 @@ func (s *Server) shortifyURL(c *gin.Context) {
 	log.Println("Shortify")
 	var url model.URL
 	if err := c.ShouldBindJSON(&url); err != nil {
-		c.JSON(http.StatusBadRequest, &DefaultResponse{
+		c.JSON(http.StatusBadRequest, &model.DefaultResponse{
 			Message: "failed parse json",
 		})
 		return
 	}
 	u, err := s.db.ShortifyURL(url)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &DefaultResponse{
+		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
 			Message: "failed to create short version",
 		})
 		return

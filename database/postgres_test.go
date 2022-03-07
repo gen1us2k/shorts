@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestShortifyURL(t *testing.T) {
+func TestPostgres(t *testing.T) {
 	c, err := config.Parse()
 	assert.NoError(t, err)
 	p, err := NewPostgres(c)
@@ -27,4 +27,16 @@ func TestShortifyURL(t *testing.T) {
 	u, err = p.GetURLByHash(url.Hash)
 	assert.NoError(t, err)
 	assert.Equal(t, u, url)
+
+	urls, err := p.ListURLs(u.OwnerID)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(urls))
+	assert.Equal(t, u, urls[0])
+
+	err = p.DeleteURL(u)
+	assert.NoError(t, err)
+
+	_, err = p.GetURLByHash(u.Hash)
+	assert.Error(t, err)
+
 }

@@ -2,7 +2,7 @@ package database
 
 import (
 	"time"
-
+	// This import required to support postgres compatibility for the database
 	_ "github.com/lib/pq"
 
 	"github.com/gen1us2k/shorts/config"
@@ -10,12 +10,14 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Postgres enables support of PostgreSQL database as storage backend
 type Postgres struct {
 	WriteDatabase
 	config *config.ShortsConfig
 	conn   *sqlx.DB
 }
 
+// NewPostgres creates new instance of database layer
 func NewPostgres(c *config.ShortsConfig) (*Postgres, error) {
 	db, err := sqlx.Open("postgres", c.DSN)
 	if err != nil {
@@ -23,6 +25,8 @@ func NewPostgres(c *config.ShortsConfig) (*Postgres, error) {
 	}
 	return &Postgres{conn: db, config: c}, nil
 }
+
+// ShortifyURL generates short hash code of url and stores it in the database
 func (p *Postgres) ShortifyURL(u model.URL) (model.URL, error) {
 	var url model.URL
 	tx, err := p.conn.Beginx()
@@ -40,12 +44,22 @@ func (p *Postgres) ShortifyURL(u model.URL) (model.URL, error) {
 
 	return url, nil
 }
+
+// ListURLs returns all urls created by user
 func (p *Postgres) ListURLs(ownerID string) ([]model.URL, error) {
 	var urls []model.URL
 	err := p.conn.Select(&urls, "SELECT * FROM url WHERE owner_id=$1", ownerID)
 	return urls, err
 }
 
+// DeleteURL deletes URL
+func (p *Postgres) DeleteURL(url model.URL) error {
+	_, err := p.conn.Exec("DELETE FROM url WHERE id=$1", url.ID)
+	return err
+
+}
+
+// StoreView stores view
 func (p *Postgres) StoreView(ref model.Referer) error {
 	tx, err := p.conn.Begin()
 	if err != nil {
@@ -60,6 +74,7 @@ func (p *Postgres) StoreView(ref model.Referer) error {
 	return tx.Commit()
 }
 
+//GetURLByHash returns URL from the database by given hash
 func (p *Postgres) GetURLByHash(hash string) (model.URL, error) {
 	var url model.URL
 	err := p.conn.Get(&url, "SELECT * FROM url WHERE hash=$1", hash)

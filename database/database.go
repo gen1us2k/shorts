@@ -5,12 +5,18 @@ import (
 )
 
 type (
+	// WriteDatabase interface represents interface for
+	// a database layer with write permissions. For Analytics you need to implement
+	// Analytics interface
 	WriteDatabase interface {
 		ShortifyURL(model.URL) (model.URL, error)
 		ListURLs(string) ([]model.URL, error)
 		GetURLByHash(string) (model.URL, error)
 		StoreView(model.Referer) error
+		DeleteURL(model.URL) error
 	}
+	// Analytics interface required for analytics
+	// for Write API you need to implement WriteDatabase interface
 	Analytics interface {
 		Statistics(model.URL) (model.Statistics, error)
 	}

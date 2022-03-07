@@ -33,6 +33,7 @@ func New(c *config.ShortsConfig) (*Server, error) {
 }
 func (s *Server) initRoutes() {
 	s.r.GET("/:hash", s.showURL)
+
 	// The only kratos thing would be here
 	userAPI := s.r.Group("/api/")
 	userAPI.POST("/url", s.shortifyURL)
@@ -40,7 +41,10 @@ func (s *Server) initRoutes() {
 
 	// TODO: Implement RBAC here
 	analyticsAPI := s.r.Group("/analytics")
-	_ = analyticsAPI
+	analyticsAPI.GET("/url", s.getURLStats)
+
+}
+func (s *Server) getURLStats(c *gin.Context) {
 
 }
 

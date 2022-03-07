@@ -51,7 +51,7 @@ func (p *Postgres) ShortifyURL(u model.URL) (model.URL, error) {
 
 // ListURLs returns all urls created by user
 func (p *Postgres) ListURLs(ownerID string) ([]model.URL, error) {
-	var urls []model.URL
+	urls := []model.URL{}
 	err := p.conn.Select(&urls, "SELECT * FROM url WHERE owner_id=$1", ownerID)
 	return urls, err
 }

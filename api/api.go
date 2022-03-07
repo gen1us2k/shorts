@@ -12,6 +12,7 @@ import (
 )
 
 type (
+	// Server struct implements HTTP API used for service
 	Server struct {
 		r      *gin.Engine
 		config *config.ShortsConfig
@@ -19,6 +20,7 @@ type (
 	}
 )
 
+// New initializes API by given config
 func New(c *config.ShortsConfig) (*Server, error) {
 	db, err := database.NewPostgres(c)
 	if err != nil {
@@ -34,13 +36,14 @@ func New(c *config.ShortsConfig) (*Server, error) {
 }
 func (s *Server) initRoutes() {
 	authMiddleware := middleware.NewAuthenticationMiddleware(s.config)
-	s.r.Use(authMiddleware.AuthenticationMiddleware)
-	s.r.GET("/:hash", s.showURL)
+	s.r.GET("/u/:hash", s.showURL)
 
 	// The only kratos thing would be here
 	userAPI := s.r.Group("/api/")
+	userAPI.Use(authMiddleware.AuthenticationMiddleware)
 	userAPI.POST("/url", s.shortifyURL)
 	userAPI.GET("/url", s.listURLs)
+	userAPI.DELETE("/url/:hash", s.deleteURL)
 
 	// TODO: Implement RBAC here
 	analyticsAPI := s.r.Group("/analytics")
@@ -50,9 +53,39 @@ func (s *Server) initRoutes() {
 func (s *Server) getURLStats(c *gin.Context) {
 
 }
+func (s *Server) deleteURL(c *gin.Context) {
+	hash := c.Param("hash")
+	ownerID, ok := c.Get(config.OwnerKey)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, &model.DefaultResponse{
+			Message: "Unauthorized",
+		})
+	}
+	u, err := s.db.GetURLByHash(hash)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
+			Message: "error querying database",
+		})
+		return
+	}
+	if u.OwnerID != ownerID {
+		c.JSON(http.StatusForbidden, &model.DefaultResponse{
+			Message: "you can't delete this item",
+		})
+		return
+	}
+	if err := s.db.DeleteURL(u); err != nil {
+		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
+			Message: "error querying database",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, &model.DefaultResponse{
+		Message: "deleted",
+	})
+}
 
 func (s *Server) showURL(c *gin.Context) {
-	log.Println("showURL")
 	hash := c.Param("hash")
 	u, err := s.db.GetURLByHash(hash)
 	if err != nil {
@@ -61,10 +94,9 @@ func (s *Server) showURL(c *gin.Context) {
 		})
 		return
 	}
-	referers := c.Request.Header["Referer"]
 	referer := ""
-	if len(referers) > 0 {
-		referer = referers[0]
+	if len(c.Request.Header["Referer"]) > 0 {
+		referer = c.Request.Header["Referer"][0]
 	}
 	ref := model.Referer{
 		URLID:   u.ID,
@@ -79,9 +111,13 @@ func (s *Server) showURL(c *gin.Context) {
 	c.Redirect(http.StatusMovedPermanently, u.URL)
 }
 func (s *Server) listURLs(c *gin.Context) {
-	log.Println("listURLS")
-	// FIXME: Improve handling
-	urls, err := s.db.ListURLs("something")
+	ownerID, ok := c.Get(config.OwnerKey)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, &model.DefaultResponse{
+			Message: "Unauthorized",
+		})
+	}
+	urls, err := s.db.ListURLs(ownerID.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
 			Message: "error querying database",
@@ -92,7 +128,12 @@ func (s *Server) listURLs(c *gin.Context) {
 }
 
 func (s *Server) shortifyURL(c *gin.Context) {
-	log.Println("Shortify")
+	ownerID, ok := c.Get(config.OwnerKey)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, &model.DefaultResponse{
+			Message: "Unauthorized",
+		})
+	}
 	var url model.URL
 	if err := c.ShouldBindJSON(&url); err != nil {
 		c.JSON(http.StatusBadRequest, &model.DefaultResponse{
@@ -100,6 +141,7 @@ func (s *Server) shortifyURL(c *gin.Context) {
 		})
 		return
 	}
+	url.OwnerID = ownerID.(string)
 	u, err := s.db.ShortifyURL(url)
 	if err != nil {
 		log.Println(err)
@@ -111,6 +153,7 @@ func (s *Server) shortifyURL(c *gin.Context) {
 	c.JSON(http.StatusOK, u)
 }
 
+// Start starts http server
 func (s *Server) Start() error {
 	return s.r.Run(s.config.BindAddr)
 }

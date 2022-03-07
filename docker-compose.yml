@@ -150,6 +150,7 @@ services:
   shorts:
     build:
       context: .
+    env_file: .env
 
     networks:
       - intranet

@@ -68,7 +68,7 @@ func (k *KratosMiddleware) validateSession(r *http.Request) (*KratosSession, err
 	if cookie == nil {
 		return nil, errors.New("no session in cookies")
 	}
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/sessions/whoami", k.config.APIURL), http.NoBody)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/sessions/whoami", k.config.KratosAPIURL), http.NoBody)
 	if err != nil {
 		return nil, err
 	}

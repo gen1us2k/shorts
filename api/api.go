@@ -6,6 +6,7 @@ import (
 
 	"github.com/gen1us2k/shorts/config"
 	"github.com/gen1us2k/shorts/database"
+	"github.com/gen1us2k/shorts/middleware"
 	"github.com/gen1us2k/shorts/model"
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +33,8 @@ func New(c *config.ShortsConfig) (*Server, error) {
 	return s, nil
 }
 func (s *Server) initRoutes() {
+	authMiddleware := middleware.NewAuthenticationMiddleware(s.config)
+	s.r.Use(authMiddleware.AuthenticationMiddleware)
 	s.r.GET("/:hash", s.showURL)
 
 	// The only kratos thing would be here

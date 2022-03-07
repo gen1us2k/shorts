@@ -34,7 +34,7 @@ func (p *Postgres) ShortifyURL(u model.URL) (model.URL, error) {
 		return url, err
 	}
 	u.Hash = generateHash(p.config.URLLength)
-	u.ExpiredAt = time.Now().AddDate(0, 1, -1)
+	u.ExpiredAt = time.Now().AddDate(0, 1, -1) // FIXME: Make this configurable
 	err = tx.Get(
 		&url,
 		"INSERT INTO url (url, hash, expired_at, owner_id) VALUES($1, $2, $3, $4) RETURNING id, url, hash, created_at, expired_at, owner_id",

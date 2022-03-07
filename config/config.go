@@ -14,6 +14,8 @@ type ShortsConfig struct {
 	URLLength    int    `envconfig:"URL_LENGTH" default:"8"`
 	KratosAPIURL string `envconfig:"KRATOS_API_URL" default:"http://kratos:4433"`
 	UIURL        string `envconfig:"UI_URL" default:"http://127.0.0.1:4455/login"`
+	SupabaseKey  string `envconfig:"SUPABASE_KEY"`
+	SupabaseURL  string `envconfig:"SUPABASE_URL"`
 }
 
 // Parse parses environment variables and returns

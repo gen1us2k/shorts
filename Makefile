@@ -8,3 +8,6 @@ test:
 
 create_migration:
 	migrate create -ext sql -dir migrations -seq create_url_table
+
+lint:
+	golangci-lint run ./...

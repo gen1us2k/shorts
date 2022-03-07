@@ -35,7 +35,11 @@ func (p *Postgres) ShortifyURL(u model.URL) (model.URL, error) {
 	}
 	u.Hash = generateHash(p.config.URLLength)
 	u.ExpiredAt = time.Now().AddDate(0, 1, -1)
-	err = tx.Get(&url, "INSERT INTO url (url, hash, expired_at, owner_id) VALUES($1, $2, $3, $4) RETURNING id, url, hash, created_at, expired_at, owner_id", u.URL, u.Hash, u.ExpiredAt, u.OwnerID)
+	err = tx.Get(
+		&url,
+		"INSERT INTO url (url, hash, expired_at, owner_id) VALUES($1, $2, $3, $4) RETURNING id, url, hash, created_at, expired_at, owner_id",
+		u.URL, u.Hash, u.ExpiredAt, u.OwnerID,
+	)
 	if err != nil {
 		tx.Rollback()
 		return url, err
@@ -56,7 +60,6 @@ func (p *Postgres) ListURLs(ownerID string) ([]model.URL, error) {
 func (p *Postgres) DeleteURL(url model.URL) error {
 	_, err := p.conn.Exec("DELETE FROM url WHERE id=$1", url.ID)
 	return err
-
 }
 
 // StoreView stores view
@@ -74,7 +77,7 @@ func (p *Postgres) StoreView(ref model.Referer) error {
 	return tx.Commit()
 }
 
-//GetURLByHash returns URL from the database by given hash
+// GetURLByHash returns URL from the database by given hash
 func (p *Postgres) GetURLByHash(hash string) (model.URL, error) {
 	var url model.URL
 	err := p.conn.Get(&url, "SELECT * FROM url WHERE hash=$1", hash)

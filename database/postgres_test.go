@@ -38,5 +38,4 @@ func TestPostgres(t *testing.T) {
 
 	_, err = p.GetURLByHash(u.Hash)
 	assert.Error(t, err)
-
 }

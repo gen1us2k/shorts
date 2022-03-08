@@ -76,3 +76,8 @@ authorizers:
 mutators:
   noop:
     enabled: true
+  header:
+    enabled: true
+    config:
+      headers:
+        X-URL: '{{ printIndex .MatchContext.RegexpCaptureGroups 0  }}'

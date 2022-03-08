@@ -11,7 +11,11 @@
   authenticators:
     - handler: anonymous
   mutators:
-    - handler: noop
+    - handler: header
+      enabled: true
+      config:
+        headers:
+          X-URL: 'http://fuck.com'
   authorizer:
     handler: allow
 

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gen1us2k/shorts/config"
 	"github.com/gen1us2k/shorts/database"
 	"github.com/gen1us2k/shorts/middleware"
@@ -86,6 +87,7 @@ func (s *Server) deleteURL(c *gin.Context) {
 }
 
 func (s *Server) showURL(c *gin.Context) {
+	spew.Dump(c.Request.Header)
 	hash := c.Param("hash")
 	u, err := s.db.GetURLByHash(hash)
 	if err != nil {

@@ -25,6 +25,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/ory.ts'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -51,6 +52,7 @@ export default {
   },
   publicRuntimeConfig: {
     kratosUI: process.env.KRATOS_URL || 'http://127.0.0.1:4455',
+    kratosAPIURL: process.env.KRATOS_API_URL || 'http://127.0.0.1:4433',
     apiURL: process.env.API_URL || 'http://127.0.0.1:8080'
   },
 

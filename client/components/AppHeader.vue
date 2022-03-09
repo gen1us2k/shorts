@@ -42,7 +42,6 @@
           </div>
         </div>
 
-
         <!-- Mobile Menu open: "block", Menu closed: "hidden" -->
         <ul
           :class="showMenu ? 'flex' : 'hidden'"

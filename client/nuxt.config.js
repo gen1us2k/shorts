@@ -49,6 +49,10 @@ export default {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     baseURL: '/'
   },
+  publicRuntimeConfig: {
+    kratosUI: process.env.KRATOS_URL || 'http://127.0.0.1:4455',
+    apiURL: process.env.API_URL || 'http://127.0.0.1:8080'
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

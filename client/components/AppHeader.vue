@@ -20,7 +20,7 @@
               md:text-2xl
               hover:text-blue-400
             "
-            >Shorts
+          >Shorts
           </router-link>
           <!-- Mobile menu button -->
           <div @click="showMenu = !showMenu" class="flex md:hidden">
@@ -62,13 +62,14 @@
             Home
           </li>
           <li class="text-sm font-bold text-gray-800 hover:text-blue-400">
-            Sign in
+            <a :href="$config.kratosUI + '/login'">
+              Sign in
+            </a>
           </li>
           <li class="text-sm font-bold text-gray-800 hover:text-blue-400">
-            Sign Up
-          </li>
-          <li class="text-sm font-bold text-gray-800 hover:text-blue-400">
-            Contact Us
+            <a :href="$config.kratosUI + '/registration'">
+              Sign Up
+            </a>
           </li>
         </ul>
       </nav>

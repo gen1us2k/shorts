@@ -60,14 +60,19 @@
           <li class="text-sm font-bold text-gray-800 hover:text-blue-400">
             Home
           </li>
-          <li class="text-sm font-bold text-gray-800 hover:text-blue-400">
+          <li v-if="!authenticated" class="text-sm font-bold text-gray-800 hover:text-blue-400">
             <a :href="$config.kratosUI + '/login'">
               Sign in
             </a>
           </li>
-          <li class="text-sm font-bold text-gray-800 hover:text-blue-400">
+          <li v-if="!authenticated" class="text-sm font-bold text-gray-800 hover:text-blue-400">
             <a :href="$config.kratosUI + '/registration'">
               Sign Up
+            </a>
+          </li>
+          <li v-if="authenticated" class="text-sm font-bold text-gray-800 hover:text-blue-400">
+            <a >
+              Logout {{ session.email }}
             </a>
           </li>
         </ul>
@@ -77,6 +82,11 @@
 </template>
 <script>
 export default {
+  name: 'AppHeader',
+  props: {
+    session: Object,
+    authenticated: Boolean
+  },
   data () {
     return {
       showMenu: false

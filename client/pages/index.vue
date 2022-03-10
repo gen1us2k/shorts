@@ -1,6 +1,7 @@
 <template>
   <!-- Container -->
   <div class="w-full min-h-screen bg-gray-100">
+  <AppHeader :session="$data.session" :authenticated="authenticated" />
     <div
       class="max-w-2xl mx-auto min-h-screen flex flex-col items-center justify-center px-4"
     >
@@ -79,14 +80,50 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Configuration, V0alpha2Api } from '@ory/kratos-client'
+import type { SelfServiceLogoutUrl } from '@ory/kratos-client'
+import type { AxiosResponse } from 'axios'
+import AppHeader from '../components/AppHeader'
+
+const getAuthState = async ({ app }) => {
+  const ory = new V0alpha2Api(
+    new Configuration({
+      basePath: app.$config.kratosAPIURL,
+      baseOptions: {
+        withCredentials: true
+      }
+    })
+  )
+
+  try {
+    const session = await ory.toSession()
+    return {
+      authenticated: true,
+      session: session,
+    }
+  } catch {
+    return {
+      authenticated: false,
+      session: {},
+    }
+  }
+}
 
 export default Vue.extend({
   name: 'IndexPage',
   data: () => {
     return {
-      loading: true,
-      errorMessage: ''
+      authenticated: false,
+      session: {},
+      loading: false,
+      errorMessage: ""
     }
-  }
+  },
+  async asyncData (context) {
+		const authState = await getAuthState(context)
+    return {
+      ...authState
+    }
+  },
 })
 </script>

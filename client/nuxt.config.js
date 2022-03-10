@@ -3,6 +3,7 @@ export default {
   target: 'static',
 
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: false,
   head: {
     title: 'Shorts',
     htmlAttrs: {
@@ -24,9 +25,9 @@ export default {
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    '~/plugins/ory.ts'
-  ],
+  // plugins: [
+  //   '~/plugins/ory.ts'
+  // ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -42,8 +43,27 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    //'@nuxtjs/auth-next'
   ],
+  auth: {
+    strategues: {
+      local: {
+        token: {
+          required: false,
+          type: false
+        },
+        user: {
+          property: 'user'
+        },
+        endpoints: {
+          user: { 'url': 'http://127.0.0.1:4455/session/whoami', method: 'get'}
+        }
+
+      },
+    },
+
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {

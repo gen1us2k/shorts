@@ -81,6 +81,6 @@ export default Vue.extend({
     context.store.commit('session/setSession', authState.session.data)
     context.store.commit('session/setAuthenticated', authState.authenticated)
     context.store.commit('session/setLogoutURL', logoutData.data.logout_url)
-  },
+  }
 })
 </script>

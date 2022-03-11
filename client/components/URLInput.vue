@@ -79,10 +79,18 @@ export default {
       e.preventDefault()
       this.loading = true
       this.errorMessage = this.validateURL(this.url)
-      const result = await this.$axios.$post('/api/url', {
-        url: this.url
-      })
-      console.log(result)
+      try {
+        const result = await this.$axios.$post('/api/url', {
+          url: this.url
+        })
+        this.$store.commit('url/add', result.data)
+      } catch (error) {
+        if (error.response) {
+          this.errorMessage = error.response.message
+        } else {
+          this.errorMessage = 'Sorry, the API is offline. Try again later'
+        }
+      }
       this.loading = false
     },
     validateURL (str) {

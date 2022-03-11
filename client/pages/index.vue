@@ -1,7 +1,7 @@
 <template>
   <!-- Container -->
   <div class="w-full min-h-screen bg-gray-100">
-  <AppHeader :session="$data.session" :authenticated="authenticated" />
+    <AppHeader />
     <div
       class="max-w-2xl mx-auto min-h-screen flex flex-col items-center justify-center px-4"
     >
@@ -121,6 +121,8 @@ export default Vue.extend({
   },
   async asyncData (context) {
 		const authState = await getAuthState(context)
+    context.store.commit('session/setSession', authState.session)
+    context.store.commit('session/setAuthenticated', authState.authenticated)
     return {
       ...authState
     }

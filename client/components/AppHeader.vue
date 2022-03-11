@@ -83,9 +83,13 @@
 <script>
 export default {
   name: 'AppHeader',
-  props: {
-    session: Object,
-    authenticated: Boolean
+  computed: {
+    authenticated() {
+      return this.$store.state.session.authenticated
+    },
+    session() {
+      return this.$store.state.session.session
+    }
   },
   data () {
     return {

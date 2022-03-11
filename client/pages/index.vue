@@ -16,6 +16,7 @@
       </h2>
 
       <URLInput />
+      <URLView />
 
     </div>
   </div>

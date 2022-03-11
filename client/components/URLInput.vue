@@ -1,6 +1,6 @@
 <template>
-  <div class=" w-full mt-6 flex rounded-md shadow-sm">
-    <div class="relative flex-grow focus-within:z-10" v-if="authenticated">
+  <div class=" w-full mt-6 flex rounded-md shadow-sm" v-if="authenticated">
+    <div class="relative flex-grow focus-within:z-10" >
       <DownloadIcon />
       <input
           class="text-gray-700 py-3 form-input block w-full rounded-none rounded-l-md pl-10 transition ease-in-out duration-150 font-semibold sm:text-sm sm:leading-5"

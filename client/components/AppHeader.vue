@@ -71,8 +71,8 @@
             </a>
           </li>
           <li v-if="authenticated" class="text-sm font-bold text-gray-800 hover:text-blue-400">
-            <a >
-              Logout {{ session.email }}
+            <a :href="logoutURL">
+              Logout
             </a>
           </li>
         </ul>
@@ -89,6 +89,9 @@ export default {
     },
     session() {
       return this.$store.state.session.session
+    },
+    logoutURL() {
+      return this.$store.state.session.logoutURL
     }
   },
   data () {

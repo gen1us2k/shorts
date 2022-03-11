@@ -5,12 +5,12 @@ import "time"
 type (
 	// URL struct is required for working with databases
 	URL struct {
-		ID        int64     `db:"id"`
+		ID        int64     `db:"id" json:"id"`
 		URL       string    `db:"url" json:"url"`
-		Hash      string    `db:"hash"`
-		CreatedAt time.Time `db:"created_at"`
-		ExpiredAt time.Time `db:"expired_at"`
-		OwnerID   string    `db:"owner_id"`
+		Hash      string    `db:"hash" json:"hash"`
+		CreatedAt time.Time `db:"created_at" json:"created_at"`
+		ExpiredAt time.Time `db:"expired_at" json:"expired_at"`
+		OwnerID   string    `db:"owner_id" json:"owner_id"`
 	}
 	Referer struct {
 		ID      int64  `db:"id"`

@@ -17,14 +17,6 @@
 
       <URLInput />
 
-      <!-- Error Message -->
-      <p
-        v-show="errorMessage"
-        class="text-xs font-semibold text-red-600 italic"
-      >
-        {{ errorMessage }}
-      </p>
-
     </div>
   </div>
 </template>
@@ -89,11 +81,6 @@ export default Vue.extend({
     context.store.commit('session/setSession', authState.session.data)
     context.store.commit('session/setAuthenticated', authState.authenticated)
     context.store.commit('session/setLogoutURL', logoutData.data.logout_url)
-  },
-  data: () => {
-    return {
-      errorMessage: ""
-    }
   },
 })
 </script>

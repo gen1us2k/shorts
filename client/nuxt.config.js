@@ -43,32 +43,14 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
-    //'@nuxtjs/auth-next'
+    '@nuxtjs/axios'
   ],
-  auth: {
-    strategues: {
-      local: {
-        token: {
-          required: false,
-          type: false
-        },
-        user: {
-          property: 'user'
-        },
-        endpoints: {
-          user: { 'url': 'http://127.0.0.1:4455/session/whoami', method: 'get'}
-        }
-
-      },
-    },
-
-  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/'
+    baseURL: process.env.API_URL || 'http://127.0.0.1:8080',
+    credentials: true
   },
   publicRuntimeConfig: {
     kratosUI: process.env.KRATOS_URL || 'http://127.0.0.1:4455',

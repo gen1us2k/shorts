@@ -6,7 +6,7 @@ type (
 	// URL struct is required for working with databases
 	URL struct {
 		ID        int64     `db:"id"`
-		URL       string    `db:"url"`
+		URL       string    `db:"url" json:"url"`
 		Hash      string    `db:"hash"`
 		CreatedAt time.Time `db:"created_at"`
 		ExpiredAt time.Time `db:"expired_at"`

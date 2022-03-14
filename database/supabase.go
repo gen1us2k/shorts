@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -48,6 +49,9 @@ func (s *Supabase) GetURLByHash(hash string) (model.URL, error) {
 	var urls []model.URL
 	q := s.conn.From("url").Select("*", "10", false).Match(map[string]string{"hash": hash})
 	_, err := q.ExecuteTo(&urls)
+	if len(urls) == 0 {
+		return model.URL{}, errors.New("does not exist")
+	}
 	return urls[0], err
 }
 func (s *Supabase) StoreView(ref model.Referer) error {

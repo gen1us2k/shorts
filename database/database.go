@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/gen1us2k/shorts/config"
 	"github.com/gen1us2k/shorts/model"
 )
 
@@ -21,3 +22,13 @@ type (
 		Statistics(model.URL) (model.Statistics, error)
 	}
 )
+
+func CreateStorage(c *config.ShortsConfig) (WriteDatabase, error) {
+	if c.DatabaseProvider == config.ProviderPostgres {
+		return NewPostgres(c)
+	}
+	if c.DatabaseProvider == config.ProviderSupabase {
+		return NewSupabase(c)
+	}
+	return NewPostgres(c)
+}

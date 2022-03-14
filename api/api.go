@@ -23,7 +23,8 @@ type (
 
 // New initializes API by given config
 func New(c *config.ShortsConfig) (*Server, error) {
-	db, err := database.NewPostgres(c)
+
+	db, err := database.CreateStorage(c)
 	if err != nil {
 		return nil, err
 	}

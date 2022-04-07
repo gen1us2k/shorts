@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -121,7 +122,8 @@ func (s *Server) listURLs(c *gin.Context) {
 		})
 	}
 	urls, err := s.db.ListURLs(ownerID.(string))
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
+
 		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
 			Message: "error querying database",
 		})

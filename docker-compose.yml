@@ -16,7 +16,7 @@ services:
     networks:
       - intranet
     volumes:
-      - ./oathkeeper:/etc/config/oathkeeper
+      - ./oathkeeper/cloud:/etc/config/oathkeeper
 
   postgres-kratos:
     image: postgres:9.6
@@ -161,3 +161,10 @@ volumes:
 
 networks:
   intranet:
+  bridged:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.0.0/24
+          gateway: 10.0.0.1/32

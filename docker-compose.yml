@@ -16,7 +16,7 @@ services:
     networks:
       - intranet
     volumes:
-      - ./oathkeeper/cloud:/etc/config/oathkeeper
+      - ./oathkeeper:/etc/config/oathkeeper
 
   postgres-kratos:
     image: postgres:9.6

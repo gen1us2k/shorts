@@ -55,7 +55,8 @@ export default {
   publicRuntimeConfig: {
     kratosUI: process.env.KRATOS_URL || 'http://127.0.0.1:4455',
     kratosAPIURL: process.env.KRATOS_API_URL || 'http://127.0.0.1:4433',
-    apiURL: process.env.API_URL || 'http://127.0.0.1:8080'
+    apiURL: process.env.API_URL || 'http://127.0.0.1:8080',
+    baseURL: process.env.BASE_URL || 'http://127.0.0.1:8080'
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

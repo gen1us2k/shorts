@@ -35,7 +35,7 @@
 
 					<div class="mt-3 text-sm leading-5">
 						<a
-								v-bind:href="shortenedUrl.shortened"
+                v-bind:href="shortened(shortenedUrl.hash)"
 								target="_blank"
 								class="font-medium text-indigo-600 hover:text-indigo-500 transition ease-in-out duration-150"
 								>
@@ -56,10 +56,15 @@ export default {
       console.log("API is offline")
     }
   },
+  methods: {
+    shortened (hash) {
+      return this.$config.baseURL + '/u/' + hash
+    }
+  },
   data() {
     return {
       shortenedUrls: []
     }
-  },
+  }
 }
 </script>

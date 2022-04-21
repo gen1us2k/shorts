@@ -13,6 +13,7 @@ import (
 // Postgres enables support of PostgreSQL database as storage backend
 type Postgres struct {
 	WriteDatabase
+	Analytics
 	config *config.ShortsConfig
 	conn   *sqlx.DB
 }
@@ -75,6 +76,12 @@ func (p *Postgres) StoreView(ref model.Referer) error {
 	}
 
 	return tx.Commit()
+}
+
+func (p *Postgres) GetStats(hash string) (model.Stats, error) {
+	var stat model.Stats
+	err := p.conn.Get(&stat, "SELECT hash, count(*) FROM url_view u join url on u.url_id=url.id where url.hash=$1", hash)
+	return stat, err
 }
 
 // GetURLByHash returns URL from the database by given hash

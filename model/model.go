@@ -12,6 +12,10 @@ type (
 		ExpiredAt time.Time `db:"expired_at" json:"expired_at"`
 		OwnerID   string    `db:"owner_id" json:"owner_id"`
 	}
+	Stats struct {
+		Hash  string `db:"hash"`
+		Count int64  `db:"count"`
+	}
 	Referer struct {
 		ID      int64  `db:"id"`
 		URLID   int64  `db:"url_id"`

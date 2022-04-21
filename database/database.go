@@ -20,11 +20,13 @@ type (
 		StoreView(model.Referer) error
 		// DeleteURL deletes URL
 		DeleteURL(model.URL) error
+		GetStats(string) (model.Stats, error)
 	}
 	// Analytics interface required for analytics
 	// for Write API you need to implement WriteDatabase interface
 	Analytics interface {
 		Statistics(model.URL) (model.Statistics, error)
+		GetStats(string) (model.Stats, error)
 	}
 )
 

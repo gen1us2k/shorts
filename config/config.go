@@ -19,6 +19,9 @@ type ShortsConfig struct {
 	UIURL            string `envconfig:"UI_URL" default:"http://127.0.0.1:4455/login"`
 	SupabaseKey      string `envconfig:"SUPABASE_KEY"`
 	SupabaseURL      string `envconfig:"SUPABASE_URL"`
+	KetoWriteAPI     string `envconfig:"KETO_WRITE_API" default:"http://keto:4467"`
+	KetoReadAPI      string `envconfig:"KETO_READ_API" default:"http://keto:4466"`
+	KetoNamespace    string `envconfig:"KETO_NAMESPACE"`
 }
 
 // Parse parses environment variables and returns

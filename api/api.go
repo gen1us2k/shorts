@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/davecgh/go-spew/spew"
+	"github.com/gen1us2k/shorts/auth"
 	"github.com/gen1us2k/shorts/config"
 	"github.com/gen1us2k/shorts/database"
 	"github.com/gen1us2k/shorts/middleware"
@@ -19,6 +19,7 @@ type (
 		r      *gin.Engine
 		config *config.ShortsConfig
 		db     database.WriteDatabase
+		keto   *auth.Keto
 	}
 )
 
@@ -33,6 +34,7 @@ func New(c *config.ShortsConfig) (*Server, error) {
 		r:      gin.Default(),
 		config: c,
 		db:     db,
+		keto:   auth.NewKeto(c),
 	}
 	s.initRoutes()
 	return s, nil
@@ -50,10 +52,32 @@ func (s *Server) initRoutes() {
 
 	// TODO: Implement RBAC here
 	analyticsAPI := s.r.Group("/analytics")
-	analyticsAPI.GET("/url", s.getURLStats)
+	analyticsAPI.GET("/url/:hash", s.getURLStats)
 
 }
 func (s *Server) getURLStats(c *gin.Context) {
+	ownerID, ok := c.Get(config.OwnerKey)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, &model.DefaultResponse{
+			Message: "Unauthorized",
+		})
+		return
+	}
+	hash := c.Param("hash")
+	if !s.keto.CheckAccess(hash, ownerID.(string)) {
+		c.JSON(http.StatusUnauthorized, &model.DefaultResponse{
+			Message: "You don't have access to the requested resource",
+		})
+		return
+	}
+	stats, err := s.db.GetStats(hash)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, &model.DefaultResponse{
+			Message: "error querying database",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, &stats)
 
 }
 func (s *Server) deleteURL(c *gin.Context) {
@@ -89,7 +113,6 @@ func (s *Server) deleteURL(c *gin.Context) {
 }
 
 func (s *Server) showURL(c *gin.Context) {
-	spew.Dump(c.Request.Header)
 	hash := c.Param("hash")
 	u, err := s.db.GetURLByHash(hash)
 	if err != nil {
@@ -155,6 +178,13 @@ func (s *Server) shortifyURL(c *gin.Context) {
 		})
 		return
 	}
+	if err := s.keto.GrantAccess(u.Hash, ownerID.(string)); err != nil {
+		c.JSON(http.StatusInternalServerError, &model.DefaultResponse{
+			Message: "failed to create short version",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, u)
 }
 

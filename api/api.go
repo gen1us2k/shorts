@@ -10,6 +10,7 @@ import (
 	"github.com/gen1us2k/shorts/database"
 	"github.com/gen1us2k/shorts/middleware"
 	"github.com/gen1us2k/shorts/model"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,12 +41,16 @@ func New(c *config.ShortsConfig) (*Server, error) {
 	return s, nil
 }
 func (s *Server) initRoutes() {
-	authMiddleware := middleware.NewAuthenticationMiddleware(s.config)
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://127.0.0.1:4000"}
+	config.AllowCredentials = true
+	oryCloudMiddleware := middleware.NewMiddleware(s.config)
+	s.r.Use(cors.New(config))
 	s.r.GET("/u/:hash", s.showURL)
 
 	// The only kratos thing would be here
 	userAPI := s.r.Group("/api/")
-	userAPI.Use(authMiddleware.AuthenticationMiddleware)
+	userAPI.Use(oryCloudMiddleware.Session())
 	userAPI.POST("/url", s.shortifyURL)
 	userAPI.GET("/url", s.listURLs)
 	userAPI.DELETE("/url/:hash", s.deleteURL)

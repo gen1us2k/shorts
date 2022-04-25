@@ -16,12 +16,12 @@ type ShortsConfig struct {
 	DatabaseProvider string `envconfig:"DATABASE_PROVIDER" default:"supabase"`
 	URLLength        int    `envconfig:"URL_LENGTH" default:"8"`
 	KratosAPIURL     string `envconfig:"KRATOS_API_URL" default:"http://kratos:4433"`
-	UIURL            string `envconfig:"UI_URL" default:"http://127.0.0.1:4455/login"`
+	UIURL            string `envconfig:"KRATOS_URL" default:"http://127.0.0.1:4455/login"`
 	SupabaseKey      string `envconfig:"SUPABASE_KEY"`
 	SupabaseURL      string `envconfig:"SUPABASE_URL"`
 	KetoWriteAPI     string `envconfig:"KETO_WRITE_API" default:"http://keto:4467"`
 	KetoReadAPI      string `envconfig:"KETO_READ_API" default:"http://keto:4466"`
-	KetoNamespace    string `envconfig:"KETO_NAMESPACE"`
+	KetoNamespace    string `envconfig:"KETO_NAMESPACE" default:"url"`
 }
 
 // Parse parses environment variables and returns

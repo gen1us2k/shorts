@@ -13,8 +13,8 @@ type (
 		OwnerID   string    `db:"owner_id" json:"owner_id"`
 	}
 	Stats struct {
-		Hash  string `db:"hash"`
-		Count int64  `db:"count"`
+		Hash  string `db:"hash" json:"hash"`
+		Count int64  `db:"count" json:"count"`
 	}
 	Referer struct {
 		ID      int64  `db:"id"`

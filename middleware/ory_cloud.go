@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gen1us2k/shorts/config"
@@ -8,39 +9,40 @@ import (
 	client "github.com/ory/kratos-client-go"
 )
 
-type kratosMiddleware struct {
+type oryCloudMiddleware struct {
 	client *client.APIClient
 	conf   *config.ShortsConfig
 }
 
-func NewMiddleware(c *config.ShortsConfig) *kratosMiddleware {
+func NewMiddleware(c *config.ShortsConfig) *oryCloudMiddleware {
 	configuration := client.NewConfiguration()
 	configuration.Servers = []client.ServerConfiguration{
 		{
 			URL: c.KratosAPIURL,
 		},
 	}
-	return &kratosMiddleware{
+	return &oryCloudMiddleware{
 		client: client.NewAPIClient(configuration),
+		conf:   c,
 	}
 }
-func (k *kratosMiddleware) Session() gin.HandlerFunc {
+func (k *oryCloudMiddleware) Session() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := k.validateSession(c.Request)
+		fmt.Println(session, err)
+		fmt.Println(session.Identity)
 		if err != nil {
+			fmt.Println(err)
 			c.Redirect(http.StatusMovedPermanently, k.conf.UIURL)
 			return
 		}
-		if !*session.Active {
-			// FIXME: Redirect an user to a better place
-			c.Redirect(http.StatusMovedPermanently, k.conf.UIURL)
-			return
-		}
+		fmt.Println(session.Identity.Id)
+		fmt.Println(session)
 		c.Set(config.OwnerKey, session.Identity.Id)
 		c.Next()
 	}
 }
-func (k *kratosMiddleware) validateSession(r *http.Request) (*client.Session, error) {
+func (k *oryCloudMiddleware) validateSession(r *http.Request) (*client.Session, error) {
 	cookies := r.Header.Get("Cookie")
 	resp, _, err := k.client.V0alpha2Api.ToSession(r.Context()).
 		Cookie(cookies).

@@ -4,7 +4,7 @@ log:
   level: debug
 
 namespaces:
-  - name: app
+  - name: url
     id: 1
 
 serve:

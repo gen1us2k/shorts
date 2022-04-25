@@ -11,7 +11,7 @@ services:
       - intranet
 
   keto-migrate:
-    image: oryd/keto:v0.7.0-alpha.1
+    image: oryd/keto:v0.8.0-alpha.2
     volumes:
       - type: bind
         source: ./keto
@@ -27,7 +27,7 @@ services:
       - intranet
 
   keto-perms:
-    image: oryd/keto:v0.7.0-alpha.1
+    image: oryd/keto:v0.8.0-alpha.2
     volumes:
       - type: bind
         source: ./keto
@@ -43,7 +43,7 @@ services:
       - intranet
 
   keto:
-    image: oryd/keto:v0.7.0-alpha.1
+    image: oryd/keto:v0.8.0-alpha.2
     volumes:
       - type: bind
         source: ./keto
@@ -75,7 +75,7 @@ services:
       context: .
     env_file: .env
     ports:
-      - 8090:8090
+      - 8080:8090
 
     networks:
       - intranet

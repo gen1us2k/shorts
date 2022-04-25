@@ -44,6 +44,7 @@ func (s *Server) initRoutes() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://127.0.0.1:4000"}
 	config.AllowCredentials = true
+	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
 	oryCloudMiddleware := middleware.NewMiddleware(s.config)
 	s.r.Use(cors.New(config))
 	s.r.GET("/u/:hash", s.showURL)
@@ -57,6 +58,7 @@ func (s *Server) initRoutes() {
 
 	// TODO: Implement RBAC here
 	analyticsAPI := s.r.Group("/analytics")
+	analyticsAPI.Use(oryCloudMiddleware.Session())
 	analyticsAPI.GET("/url/:hash", s.getURLStats)
 
 }

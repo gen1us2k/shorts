@@ -25,12 +25,13 @@ func NewKeto(c *config.ShortsConfig) *Keto {
 		},
 	}
 	k.writeClient = client.NewAPIClient(configuration)
-	configuration.Servers = []client.ServerConfiguration{
+	conf := client.NewConfiguration()
+	conf.Servers = []client.ServerConfiguration{
 		{
 			URL: c.KetoReadAPI,
 		},
 	}
-	k.readClient = client.NewAPIClient(configuration)
+	k.readClient = client.NewAPIClient(conf)
 	return k
 }
 

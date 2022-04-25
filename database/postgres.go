@@ -80,7 +80,7 @@ func (p *Postgres) StoreView(ref model.Referer) error {
 
 func (p *Postgres) GetStats(hash string) (model.Stats, error) {
 	var stat model.Stats
-	err := p.conn.Get(&stat, "SELECT hash, count(*) FROM url_view u join url on u.url_id=url.id where url.hash=$1", hash)
+	err := p.conn.Get(&stat, "SELECT hash, count(*) FROM url_view u join url on u.url_id=url.id where url.hash=$1 GROUP BY url.hash", hash)
 	return stat, err
 }
 
